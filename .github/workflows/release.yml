@@ -5,6 +5,11 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write      # nécessaire pour créer / mettre à jour la release (gh-release)
+  packages: write      # nécessaire pour pousser l'image sur ghcr.io
+  actions: read
+
 jobs:
   generate-metadata:
     runs-on: ubuntu-latest

@@ -1,4 +1,4 @@
-name: Tinyauth CI
+name: Passage CI
 on:
   push:
     branches:
