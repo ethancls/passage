@@ -1,0 +1,26 @@
+# dist
+internal/assets/dist
+
+# binaries
+tinyauth
+
+# test docker compose
+docker-compose.test*
+
+# users file
+users.txt
+
+# secret test file
+secret*
+
+# apple stuff
+.DS_Store
+
+# env
+.env
+
+# tmp directory
+tmp
+
+# version files
+internal/assets/version
