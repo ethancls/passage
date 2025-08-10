@@ -1,16 +1,14 @@
 import { LoginForm } from "@/components/auth/login-form";
-import { GenericIcon } from "@/components/icons/generic";
+import { ScanFace } from "lucide-react";
 import { GithubIcon } from "@/components/icons/github";
 import { GoogleIcon } from "@/components/icons/google";
 import { OAuthButton } from "@/components/ui/oauth-button";
 import { SeperatorWithChildren } from "@/components/ui/separator";
 import { useAppContext } from "@/context/app-context";
 import { useUserContext } from "@/context/user-context";
-import { useIsMounted } from "@/lib/hooks/use-is-mounted";
 import { LoginSchema } from "@/schemas/login-schema";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError, type AxiosResponse } from "axios";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useLocation } from "react-router";
 import { toast } from "sonner";
@@ -23,7 +21,6 @@ export const LoginPage = () => {
   const brandTitle = title?.trim() || "Passage";
   const { search } = useLocation();
   const { t } = useTranslation();
-  const isMounted = useIsMounted(); // conservé si side-effects futurs
   const searchParams = new URLSearchParams(search);
   const redirectUri = searchParams.get("redirect_uri");
   const oauthConfigured = configuredProviders.filter((provider: string) => provider !== "username").length > 0;
@@ -95,7 +92,7 @@ export const LoginPage = () => {
                       {configuredProviders.includes("generic") && (
                         <OAuthButton
                           title={genericName}
-                          icon={<GenericIcon />}
+                          icon={<ScanFace />}
                           className="w-full"
                           onClick={() => oauthMutation.mutate("generic")}
                           loading={oauthMutation.isPending && oauthMutation.variables === "generic"}
@@ -168,7 +165,7 @@ export const LoginPage = () => {
                   {configuredProviders.includes("generic") && (
                     <OAuthButton
                       title={genericName}
-                      icon={<GenericIcon />}
+                      icon={<ScanFace />}
                       className="w-full"
                       onClick={() => oauthMutation.mutate("generic")}
                       loading={oauthMutation.isPending && oauthMutation.variables === "generic"}
