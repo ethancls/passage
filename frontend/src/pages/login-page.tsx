@@ -8,7 +8,7 @@ import { useAppContext } from "@/context/app-context";
 import { useUserContext } from "@/context/user-context";
 import { LoginSchema } from "@/schemas/login-schema";
 import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError, type AxiosResponse } from "axios";
+import axios, { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { Navigate, useLocation } from "react-router";
 import { toast } from "sonner";
