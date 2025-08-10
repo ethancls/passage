@@ -59,6 +59,7 @@ jobs:
       - name: Build frontend
         run: |
           cd frontend
+          sed -i "s/__VERSION__/${{ needs.generate-metadata.outputs.VERSION }}/g" index.html
           bun run build
 
       - name: Build (amd64)
@@ -104,6 +105,7 @@ jobs:
       - name: Build frontend
         run: |
           cd frontend
+          sed -i "s/__VERSION__/${{ needs.generate-metadata.outputs.VERSION }}/g" index.html
           bun run build
 
       - name: Build (arm64)
