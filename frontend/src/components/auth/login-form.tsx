@@ -80,7 +80,7 @@ export const LoginForm = (props: Props) => {
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit" loading={loading}>
+        <Button className="w-full cursor-pointer" type="submit" loading={loading}>
           {t("loginSubmit")}
         </Button>
       </form>

@@ -203,21 +203,16 @@ func (h *Handlers) OAuthCallbackHandler(c *gin.Context) {
 
 	log.Debug().Str("redirectURI", redirectCookie).Msg("Got redirect URI")
 
-	queries, err := query.Values(types.LoginQuery{
-		RedirectURI: redirectCookie,
-	})
-
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to build queries")
-		c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("%s/error", h.Config.AppURL))
-		return
-	}
-
-	log.Debug().Msg("Got redirect query")
+	// plus besoin de construire la query /continue
 
 	// Clean up redirect cookie
 	c.SetCookie(h.Config.RedirectCookieName, "", -1, "/", "", h.Config.CookieSecure, true)
 
-	// Redirect to continue with the redirect URI
-	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("%s/continue?%s", h.Config.AppURL, queries.Encode()))
+	// Redirect directement vers l'application (redirect URI si fournie)
+	finalRedirect := redirectCookie
+	if finalRedirect == "" {
+		finalRedirect = h.Config.AppURL
+	}
+	log.Debug().Str("finalRedirect", finalRedirect).Msg("Redirecting user after OAuth")
+	c.Redirect(http.StatusTemporaryRedirect, finalRedirect)
 }
