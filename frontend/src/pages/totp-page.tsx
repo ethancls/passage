@@ -40,9 +40,7 @@ export const TotpPage = () => {
       });
 
       setTimeout(() => {
-        window.location.replace(
-          `/continue?redirect_uri=${encodeURIComponent(redirectUri ?? "")}`,
-        );
+        window.location.replace(redirectUri ? decodeURIComponent(redirectUri) : "/");
       }, 500);
     },
     onError: () => {

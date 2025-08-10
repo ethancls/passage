@@ -1,3 +1,4 @@
+---
 services:
   traefik:
     container_name: traefik
@@ -13,8 +14,10 @@ services:
     image: traefik/whoami:latest
     labels:
       traefik.enable: true
-      traefik.http.routers.nginx.rule: Host(`whoami.example.com`)
-      traefik.http.routers.nginx.middlewares: tinyauth
+      # Route d'exemple whoami sur domaine dynamique sslip.io
+      traefik.http.routers.whoami.rule: Host(`whoami.127.0.0.1.sslip.io`)
+      traefik.http.routers.whoami.middlewares: tinyauth
+      traefik.http.services.whoami.loadbalancer.server.port: 80
 
   tinyauth-frontend:
     container_name: tinyauth-frontend
@@ -27,7 +30,8 @@ services:
       - 5173:5173
     labels:
       traefik.enable: true
-      traefik.http.routers.tinyauth.rule: Host(`tinyauth.example.com`)
+      # UI accessible via tinyauth.127.0.0.1.sslip.io
+      traefik.http.routers.tinyauth-frontend.rule: Host(`tinyauth.127.0.0.1.sslip.io`)
 
   tinyauth-backend:
     container_name: tinyauth-backend
@@ -45,4 +49,7 @@ services:
       - 4000:4000
     labels:
       traefik.enable: true
+      # Middleware d'auth (forwardAuth)
       traefik.http.middlewares.tinyauth.forwardauth.address: http://tinyauth-backend:3000/api/auth/traefik
+      # Route backend directe (API) sur api.127.0.0.1.sslip.io si besoin d'accès direct
+      traefik.http.routers.tinyauth-backend.rule: Host(`api.127.0.0.1.sslip.io`)
