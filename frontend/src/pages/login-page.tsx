@@ -1,5 +1,5 @@
 import { LoginForm } from "@/components/auth/login-form";
-import { ScanFace } from "lucide-react";
+import { Fingerprint } from "lucide-react";
 import { GithubIcon } from "@/components/icons/github";
 import { GoogleIcon } from "@/components/icons/google";
 import { OAuthButton } from "@/components/ui/oauth-button";
@@ -92,7 +92,7 @@ export const LoginPage = () => {
                       {configuredProviders.includes("generic") && (
                         <OAuthButton
                           title={genericName}
-                          icon={<ScanFace />}
+                          icon={<Fingerprint />}
                           className="w-full"
                           onClick={() => oauthMutation.mutate("generic")}
                           loading={oauthMutation.isPending && oauthMutation.variables === "generic"}
@@ -165,7 +165,7 @@ export const LoginPage = () => {
                   {configuredProviders.includes("generic") && (
                     <OAuthButton
                       title={genericName}
-                      icon={<ScanFace />}
+                      icon={<Fingerprint />}
                       className="w-full"
                       onClick={() => oauthMutation.mutate("generic")}
                       loading={oauthMutation.isPending && oauthMutation.variables === "generic"}
