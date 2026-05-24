@@ -1,3 +1,4 @@
+import { AuthShell } from "@/components/auth/auth-shell";
 import { LoginForm } from "@/components/auth/login-form";
 import { Fingerprint } from "lucide-react";
 import { GithubIcon } from "@/components/icons/github";
@@ -13,10 +14,16 @@ import { useTranslation } from "react-i18next";
 import { Navigate, useLocation } from "react-router";
 import { toast } from "sonner";
 
+type OAuthUrlResponse = {
+  url: string;
+};
+
+type LoginResponse = {
+  totpPending?: boolean;
+};
 
 export const LoginPage = () => {
   const { isLoggedIn } = useUserContext();
-  if (isLoggedIn) return <Navigate to="/logout" />;
   const { configuredProviders, title, genericName, backgroundImage } = useAppContext();
   const brandTitle = title?.trim() || "Passage";
   const { search } = useLocation();
@@ -26,18 +33,22 @@ export const LoginPage = () => {
   const oauthConfigured = configuredProviders.filter((provider: string) => provider !== "username").length > 0;
   const userAuthConfigured = configuredProviders.includes("username");
   const oauthMutation = useMutation({
-    mutationFn: (provider: string) => axios.get(`/api/oauth/url/${provider}?redirect_uri=${encodeURIComponent(redirectUri ?? "")}`),
+    mutationFn: (provider: string) =>
+      axios.get<OAuthUrlResponse>(
+        `/api/oauth/url/${provider}?redirect_uri=${encodeURIComponent(redirectUri ?? "")}`,
+      ),
     mutationKey: ["oauth"],
-    onSuccess: (data: AxiosResponse<any>) => {
+    onSuccess: (data: AxiosResponse<OAuthUrlResponse>) => {
       toast.info(t("loginOauthSuccessTitle"), { description: t("loginOauthSuccessSubtitle") });
       setTimeout(() => { window.location.href = data.data.url; }, 500);
     },
     onError: () => { toast.error(t("loginOauthFailTitle"), { description: t("loginOauthFailSubtitle") }); },
   });
   const loginMutation = useMutation({
-    mutationFn: (values: LoginSchema) => axios.post("/api/login", values),
+    mutationFn: (values: LoginSchema) =>
+      axios.post<LoginResponse>("/api/login", values),
     mutationKey: ["login"],
-    onSuccess: (data: AxiosResponse<any>) => {
+    onSuccess: (data: AxiosResponse<LoginResponse>) => {
       if (data.data.totpPending) {
         window.location.replace(`/totp?redirect_uri=${encodeURIComponent(redirectUri ?? "")}`);
         return;
@@ -50,152 +61,89 @@ export const LoginPage = () => {
     },
   });
 
+  if (isLoggedIn) return <Navigate to="/logout" />;
+
+  const providerButtons = (
+    <div className="flex flex-col gap-2">
+      {configuredProviders.includes("google") && (
+        <OAuthButton
+          title="Google"
+          icon={<GoogleIcon />}
+          className="h-10 w-full"
+          onClick={() => oauthMutation.mutate("google")}
+          loading={oauthMutation.isPending && oauthMutation.variables === "google"}
+          disabled={oauthMutation.isPending || loginMutation.isPending}
+        />
+      )}
+      {configuredProviders.includes("github") && (
+        <OAuthButton
+          title="Github"
+          icon={<GithubIcon />}
+          className="h-10 w-full"
+          onClick={() => oauthMutation.mutate("github")}
+          loading={oauthMutation.isPending && oauthMutation.variables === "github"}
+          disabled={oauthMutation.isPending || loginMutation.isPending}
+        />
+      )}
+      {configuredProviders.includes("generic") && (
+        <OAuthButton
+          title={genericName}
+          icon={<Fingerprint />}
+          className="h-10 w-full"
+          onClick={() => oauthMutation.mutate("generic")}
+          loading={oauthMutation.isPending && oauthMutation.variables === "generic"}
+          disabled={oauthMutation.isPending || loginMutation.isPending}
+        />
+      )}
+    </div>
+  );
+
   return (
-    <>
-      {/* Desktop */}
-      <div className="hidden lg:flex h-screen w-screen overflow-hidden">
-        {/* Colonne gauche (formulaire) */}
-        <div className="flex flex-col h-full w-[650px] p-16 bg-background text-foreground relative z-10">
-          <div className="flex flex-grow flex-col items-center justify-center overflow-auto">
-              <div className="w-full max-w-sm flex flex-col gap-8 animate-in fade-in slide-in-from-left-8 duration-500">
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-bold sm:text-4xl tracking-tight" style={{ fontFamily: 'var(--font-playfair)' }}>{brandTitle}</h1>
-                  {configuredProviders.length > 0 && (
-                    <p className="text-muted-foreground text-sm">
-                      {oauthConfigured ? t("loginTitle") : t("loginTitleSimple")}
-                    </p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-5">
-                  {oauthConfigured && (
-                    <div className="flex flex-col gap-2">
-                      {configuredProviders.includes("google") && (
-                        <OAuthButton
-                          title="Google"
-                          icon={<GoogleIcon />}
-                          className="w-full"
-                          onClick={() => oauthMutation.mutate("google")}
-                          loading={oauthMutation.isPending && oauthMutation.variables === "google"}
-                          disabled={oauthMutation.isPending || loginMutation.isPending}
-                        />
-                      )}
-                      {configuredProviders.includes("github") && (
-                        <OAuthButton
-                          title="Github"
-                          icon={<GithubIcon />}
-                          className="w-full"
-                          onClick={() => oauthMutation.mutate("github")}
-                          loading={oauthMutation.isPending && oauthMutation.variables === "github"}
-                          disabled={oauthMutation.isPending || loginMutation.isPending}
-                        />
-                      )}
-                      {configuredProviders.includes("generic") && (
-                        <OAuthButton
-                          title={genericName}
-                          icon={<Fingerprint />}
-                          className="w-full"
-                          onClick={() => oauthMutation.mutate("generic")}
-                          loading={oauthMutation.isPending && oauthMutation.variables === "generic"}
-                          disabled={oauthMutation.isPending || loginMutation.isPending}
-                        />
-                      )}
-                    </div>
-                  )}
-                  {userAuthConfigured && oauthConfigured && (
-                    <SeperatorWithChildren>{t("loginDivider")}</SeperatorWithChildren>
-                  )}
-                  {userAuthConfigured && (
-                    <LoginForm
-                      onSubmit={(values) => loginMutation.mutate(values)}
-                      loading={loginMutation.isPending || oauthMutation.isPending}
-                    />
-                  )}
-                  {configuredProviders.length == 0 && (
-                    <p className="text-sm text-destructive text-center">
-                      {t("failedToFetchProvidersTitle")}
-                    </p>
-                  )}
-                </div>
-                <footer className="text-xs text-muted-foreground pt-4">
-                  <p>&copy; {new Date().getFullYear()} {brandTitle}</p>
-                </footer>
-              </div>
-            </div>
-          </div>
-        {/* Colonne droite (image) */}
-        <div className="flex-1 h-full">
-          <img src={backgroundImage} alt="Login background" className="h-full w-full object-cover rounded-l-[60px]" />
-        </div>
-      </div>
-      {/* Mobile */}
-      <div className="lg:hidden flex h-screen w-screen items-center justify-center bg-cover bg-center px-4" style={{ backgroundImage: `url(${backgroundImage})` }}>
-        <div className="w-full max-w-md bg-background text-foreground backdrop-brightness-105/90 dark:backdrop-brightness-75/90 rounded-xl shadow-xl p-6 mx-3 border border-border">
-          <div className="flex flex-col gap-8 animate-in fade-in duration-500">
-            <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-bold tracking-tight" style={{ fontFamily: 'var(--font-playfair)' }}>{brandTitle}</h1>
-              {configuredProviders.length > 0 && (
-                <p className="text-muted-foreground text-sm">
-                  {oauthConfigured ? t("loginTitle") : t("loginTitleSimple")}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-col gap-5">
-              {oauthConfigured && (
-                <div className="flex flex-col gap-2">
-                  {configuredProviders.includes("google") && (
-                    <OAuthButton
-                      title="Google"
-                      icon={<GoogleIcon />}
-                      className="w-full"
-                      onClick={() => oauthMutation.mutate("google")}
-                      loading={oauthMutation.isPending && oauthMutation.variables === "google"}
-                      disabled={oauthMutation.isPending || loginMutation.isPending}
-                    />
-                  )}
-                  {configuredProviders.includes("github") && (
-                    <OAuthButton
-                      title="Github"
-                      icon={<GithubIcon />}
-                      className="w-full"
-                      onClick={() => oauthMutation.mutate("github")}
-                      loading={oauthMutation.isPending && oauthMutation.variables === "github"}
-                      disabled={oauthMutation.isPending || loginMutation.isPending}
-                    />
-                  )}
-                  {configuredProviders.includes("generic") && (
-                    <OAuthButton
-                      title={genericName}
-                      icon={<Fingerprint />}
-                      className="w-full"
-                      onClick={() => oauthMutation.mutate("generic")}
-                      loading={oauthMutation.isPending && oauthMutation.variables === "generic"}
-                      disabled={oauthMutation.isPending || loginMutation.isPending}
-                    />
-                  )}
-                </div>
-              )}
-              {userAuthConfigured && oauthConfigured && (
-                <SeperatorWithChildren>{t("loginDivider")}</SeperatorWithChildren>
-              )}
-              {userAuthConfigured && (
-                <LoginForm
-                  onSubmit={(values) => loginMutation.mutate(values)}
-                  loading={loginMutation.isPending || oauthMutation.isPending}
-                />
-              )}
-              {configuredProviders.length == 0 && (
-                <p className="text-sm text-destructive text-center">
-                  {t("failedToFetchProvidersTitle")}
-                </p>
-              )}
-            </div>
-            <footer className="text-xs text-muted-foreground pt-2 text-center">
-              <p>&copy; {new Date().getFullYear()} {brandTitle}</p>
-            </footer>
+    <AuthShell
+      backgroundImage={backgroundImage}
+      footer={
+        <p className="text-xs text-muted-foreground">
+          &copy; {new Date().getFullYear()} {brandTitle}
+        </p>
+      }
+    >
+      <div className="w-full max-w-[450px] animate-in fade-in duration-500">
+        <div className="flex justify-center">
+          <div className="rounded-2xl bg-muted p-3">
+            <img src="/favicon.svg" alt="" className="size-10" />
           </div>
         </div>
+
+        <h1
+          className="mt-5 text-3xl font-bold tracking-normal sm:text-4xl"
+          style={{ fontFamily: "var(--font-playfair)" }}
+        >
+          {brandTitle}
+        </h1>
+        {configuredProviders.length > 0 ? (
+          <p className="mt-2 text-sm text-muted-foreground">
+            {oauthConfigured ? t("loginTitle") : t("loginTitleSimple")}
+          </p>
+        ) : null}
+
+        <div className="mt-10 flex flex-col gap-5">
+          {oauthConfigured ? providerButtons : null}
+          {userAuthConfigured && oauthConfigured ? (
+            <SeperatorWithChildren>{t("loginDivider")}</SeperatorWithChildren>
+          ) : null}
+          {userAuthConfigured ? (
+            <LoginForm
+              onSubmit={(values) => loginMutation.mutate(values)}
+              loading={loginMutation.isPending || oauthMutation.isPending}
+            />
+          ) : null}
+          {configuredProviders.length === 0 ? (
+            <p className="text-center text-sm text-destructive">
+              {t("failedToFetchProvidersTitle")}
+            </p>
+          ) : null}
+        </div>
       </div>
-    </>
+    </AuthShell>
   );
 };
-// Layout responsive : desktop = colonne gauche (form), droite image; mobile = image de fond + carte centrée

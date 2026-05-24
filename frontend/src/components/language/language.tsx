@@ -20,7 +20,7 @@ export const LanguageSelector = () => {
   };
   return (
     <Select onValueChange={handleSelect} value={language}>
-      <SelectTrigger className="absolute top-5 right-5">
+      <SelectTrigger className="absolute top-5 right-5 z-50">
         <SelectValue placeholder="Select language" />
       </SelectTrigger>
       <SelectContent>

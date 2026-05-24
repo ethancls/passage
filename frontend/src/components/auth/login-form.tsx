@@ -34,7 +34,7 @@ export const LoginForm = (props: Props) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="text-left">
         <FormField
           control={form.control}
           name="username"
@@ -43,6 +43,7 @@ export const LoginForm = (props: Props) => {
               <FormLabel className="mb-2">{t("loginUsername")}</FormLabel>
               <FormControl className="mb-1">
                 <Input
+                  className="h-10"
                   placeholder={t("loginUsername")}
                   disabled={loading}
                   autoComplete="username"
@@ -62,6 +63,7 @@ export const LoginForm = (props: Props) => {
                 <FormLabel className="mb-2">{t("loginPassword")}</FormLabel>
                 <FormControl>
                   <Input
+                    className="h-10"
                     placeholder={t("loginPassword")}
                     type="password"
                     disabled={loading}
@@ -80,7 +82,7 @@ export const LoginForm = (props: Props) => {
             </FormItem>
           )}
         />
-        <Button className="w-full cursor-pointer" type="submit" loading={loading}>
+        <Button className="h-10 w-full cursor-pointer" type="submit" loading={loading}>
           {t("loginSubmit")}
         </Button>
       </form>

@@ -5,15 +5,15 @@ import { Outlet, useLocation } from "react-router";
 export const Layout = () => {
   const { backgroundImage } = useAppContext();
   const location = useLocation();
-  const isLogin = location.pathname === "/login";
+  const isAuthPage = ["/login", "/logout"].includes(location.pathname);
 
   return (
     <div
       className={
         `relative flex flex-col justify-center items-center min-h-svh ` +
-        (isLogin ? "" : "")
+        (isAuthPage ? "" : "")
       }
-      style={isLogin ? {} : {
+      style={isAuthPage ? {} : {
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
