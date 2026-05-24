@@ -17,7 +17,7 @@ export const OAuthButton = (props: Props) => {
     <Button
       onClick={onClick}
       className={twMerge("rounded-md cursor-pointer", className)}
-      variant="outline"
+      variant="default"
       {...rest}
     >
       {loading ? (

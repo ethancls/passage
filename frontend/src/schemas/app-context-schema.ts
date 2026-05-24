@@ -9,6 +9,10 @@ export const appContextSchema = z.object({
   forgotPasswordMessage: z.string(),
   oauthAutoRedirect: z.enum(["none", "github", "google", "generic"]),
   backgroundImage: z.string(),
+  authButtonColor: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/)
+    .catch("#99ccff"),
 });
 
 export type AppContextSchema = z.infer<typeof appContextSchema>;

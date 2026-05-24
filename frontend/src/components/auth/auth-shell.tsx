@@ -19,16 +19,16 @@ export const AuthShell = ({
   }, [backgroundImage]);
 
   return (
-    <div className="relative min-h-svh w-screen overflow-hidden bg-background text-center text-foreground">
+    <div className="relative h-screen w-screen overflow-hidden bg-background text-center text-foreground">
       <div
         className={cn(
-          "hidden min-h-svh w-full items-center overflow-hidden lg:flex",
+          "hidden h-screen w-full items-center overflow-hidden lg:flex",
           showImage ? "justify-start" : "justify-center",
         )}
       >
         <section
           className={cn(
-            "relative z-10 flex min-h-svh p-16",
+            "relative z-10 flex h-full p-16",
             showImage ? "w-[650px] 2xl:w-[800px]" : "w-full max-w-2xl",
           )}
         >
@@ -45,11 +45,11 @@ export const AuthShell = ({
         </section>
 
         {showImage ? (
-          <div className="absolute inset-y-6 right-6 left-[650px] z-0 overflow-hidden rounded-[40px] 2xl:left-[800px]">
+          <div className="absolute top-0 right-0 bottom-0 left-[650px] z-0 m-6 overflow-hidden rounded-[40px] 2xl:left-[800px]">
             <img
               src={backgroundImage}
               alt=""
-              className="h-full w-full object-cover"
+              className="auth-bg-zoom h-screen w-[calc(100vw-650px)] object-cover 2xl:w-[calc(100vw-800px)]"
               onError={() => setShowImage(false)}
             />
           </div>
@@ -57,7 +57,7 @@ export const AuthShell = ({
       </div>
 
       <div
-        className="flex min-h-svh items-center justify-center bg-cover bg-center px-4 py-10 lg:hidden"
+        className="flex h-screen items-center justify-center bg-cover bg-center px-4 py-10 lg:hidden"
         style={
           showImage ? { backgroundImage: `url(${backgroundImage})` } : undefined
         }
@@ -75,4 +75,3 @@ export const AuthShell = ({
     </div>
   );
 };
-

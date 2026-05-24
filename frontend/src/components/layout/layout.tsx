@@ -19,7 +19,7 @@ export const Layout = () => {
         backgroundPosition: "center",
       }}
     >
-      <LanguageSelector />
+      {!isAuthPage ? <LanguageSelector /> : null}
       <Outlet />
     </div>
   );

@@ -45,6 +45,8 @@
 
 :root {
   --radius: 0.625rem;
+  --auth-button-color: #99ccff;
+  --auth-button-foreground: #102033;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -79,6 +81,8 @@
 }
 
 .dark {
+  --auth-button-color: #99ccff;
+  --auth-button-foreground: #102033;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -119,6 +123,20 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes auth-bg-zoom {
+  from {
+    transform: scale(1.035);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.auth-bg-zoom {
+  animation: auth-bg-zoom 700ms ease-out both;
+  transform-origin: center;
 }
 
 h1 {

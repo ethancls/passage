@@ -36,6 +36,7 @@ type Config struct {
 	LoginMaxRetries         int    `mapstructure:"login-max-retries"`
 	FogotPasswordMessage    string `mapstructure:"forgot-password-message"`
 	BackgroundImage         string `mapstructure:"background-image" validate:"required"`
+	AuthButtonColor         string `mapstructure:"auth-button-color"`
 	LdapAddress             string `mapstructure:"ldap-address"`
 	LdapBindDN              string `mapstructure:"ldap-bind-dn"`
 	LdapBindPassword        string `mapstructure:"ldap-bind-password"`
@@ -54,6 +55,7 @@ type HandlersConfig struct {
 	Title                 string
 	ForgotPasswordMessage string
 	BackgroundImage       string
+	AuthButtonColor       string
 	OAuthAutoRedirect     string
 	CsrfCookieName        string
 	RedirectCookieName    string

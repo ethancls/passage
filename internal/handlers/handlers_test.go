@@ -39,6 +39,7 @@ var handlersConfig = types.HandlersConfig{
 	CsrfCookieName:        "tinyauth-csrf",
 	RedirectCookieName:    "tinyauth-redirect",
 	BackgroundImage:       "https://example.com/image.png",
+	AuthButtonColor:       "#99ccff",
 	OAuthAutoRedirect:     "none",
 }
 
@@ -178,6 +179,7 @@ func TestAppContext(t *testing.T) {
 		GenericName:           "Generic",
 		ForgotPasswordMessage: "Message",
 		BackgroundImage:       "https://example.com/image.png",
+		AuthButtonColor:       "#99ccff",
 		OAuthAutoRedirect:     "none",
 		Domain:                "localhost",
 	}

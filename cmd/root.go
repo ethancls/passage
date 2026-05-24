@@ -93,6 +93,7 @@ var rootCmd = &cobra.Command{
 			Domain:                domain,
 			ForgotPasswordMessage: config.FogotPasswordMessage,
 			BackgroundImage:       config.BackgroundImage,
+			AuthButtonColor:       config.AuthButtonColor,
 			OAuthAutoRedirect:     config.OAuthAutoRedirect,
 			CsrfCookieName:        csrfCookieName,
 			RedirectCookieName:    redirectCookieName,
@@ -212,6 +213,7 @@ func init() {
 	rootCmd.Flags().String("app-title", "Tinyauth", "Title of the app.")
 	rootCmd.Flags().String("forgot-password-message", "", "Message to show on the forgot password page.")
 	rootCmd.Flags().String("background-image", "/background.jpg", "Background image URL for the login page.")
+	rootCmd.Flags().String("auth-button-color", "#99ccff", "Hex color for primary authentication buttons.")
 	rootCmd.Flags().String("ldap-address", "", "LDAP server address (e.g. ldap://localhost:389).")
 	rootCmd.Flags().String("ldap-bind-dn", "", "LDAP bind DN (e.g. uid=user,dc=example,dc=com).")
 	rootCmd.Flags().String("ldap-bind-password", "", "LDAP bind password.")
@@ -252,6 +254,7 @@ func init() {
 	viper.BindEnv("login-max-retries", "LOGIN_MAX_RETRIES")
 	viper.BindEnv("forgot-password-message", "FORGOT_PASSWORD_MESSAGE")
 	viper.BindEnv("background-image", "BACKGROUND_IMAGE")
+	viper.BindEnv("auth-button-color", "AUTH_BUTTON_COLOR")
 	viper.BindEnv("ldap-address", "LDAP_ADDRESS")
 	viper.BindEnv("ldap-bind-dn", "LDAP_BIND_DN")
 	viper.BindEnv("ldap-bind-password", "LDAP_BIND_PASSWORD")

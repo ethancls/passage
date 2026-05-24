@@ -53,6 +53,7 @@ type AppContext struct {
 	Domain                string   `json:"domain"`
 	ForgotPasswordMessage string   `json:"forgotPasswordMessage"`
 	BackgroundImage       string   `json:"backgroundImage"`
+	AuthButtonColor       string   `json:"authButtonColor"`
 	OAuthAutoRedirect     string   `json:"oauthAutoRedirect"`
 }
 

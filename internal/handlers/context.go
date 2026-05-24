@@ -29,6 +29,7 @@ func (h *Handlers) AppContextHandler(c *gin.Context) {
 		Domain:                h.Config.Domain,
 		ForgotPasswordMessage: h.Config.ForgotPasswordMessage,
 		BackgroundImage:       h.Config.BackgroundImage,
+		AuthButtonColor:       h.Config.AuthButtonColor,
 		OAuthAutoRedirect:     h.Config.OAuthAutoRedirect,
 	}
 	c.JSON(200, appContext)

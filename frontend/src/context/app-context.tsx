@@ -2,7 +2,7 @@ import {
   appContextSchema,
   AppContextSchema,
 } from "@/schemas/app-context-schema";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -18,11 +18,21 @@ export const AppContextProvider = ({
     queryFn: () => axios.get("/api/app").then((res) => res.data),
   });
 
+  const validated = appContextSchema.safeParse(data);
+  const authButtonColor = validated.success
+    ? validated.data.authButtonColor
+    : "#99ccff";
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--auth-button-color",
+      authButtonColor,
+    );
+  }, [authButtonColor]);
+
   if (error && !isFetching) {
     throw error;
   }
-
-  const validated = appContextSchema.safeParse(data);
 
   if (validated.success === false) {
     throw validated.error;
