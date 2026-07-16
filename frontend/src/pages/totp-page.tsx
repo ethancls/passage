@@ -1,19 +1,12 @@
+import { AuthShell } from "@/components/auth/auth-shell";
 import { TotpForm } from "@/components/auth/totp-form";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useAppContext } from "@/context/app-context";
 import { useUserContext } from "@/context/user-context";
 import { TotpSchema } from "@/schemas/totp-schema";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useId } from "react";
-import { useTranslation } from "react-i18next";
 import { Navigate, useLocation } from "react-router";
 import { toast } from "sonner";
 
@@ -24,7 +17,7 @@ export const TotpPage = () => {
     return <Navigate to="/" />;
   }
 
-  const { t } = useTranslation();
+  const { backgroundImage } = useAppContext();
   const { search } = useLocation();
   const formId = useId();
 
@@ -35,39 +28,34 @@ export const TotpPage = () => {
     mutationFn: (values: TotpSchema) => axios.post("/api/totp", values),
     mutationKey: ["totp"],
     onSuccess: () => {
-      toast.success(t("totpSuccessTitle"), {
-        description: t("totpSuccessSubtitle"),
-      });
-
+      toast.success("Vérifié", { description: "Redirection en cours..." });
       setTimeout(() => {
         window.location.replace(redirectUri ? decodeURIComponent(redirectUri) : "/");
       }, 500);
     },
     onError: () => {
-      toast.error(t("totpFailTitle"), {
-        description: t("totpFailSubtitle"),
-      });
+      toast.error("Erreur", { description: "Code invalide. Réessayez." });
     },
   });
 
   return (
-    <Card className="min-w-xs sm:min-w-sm">
-      <CardHeader>
-        <CardTitle className="text-3xl">{t("totpTitle")}</CardTitle>
-        <CardDescription>{t("totpSubtitle")}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col items-center">
+    <AuthShell backgroundImage={backgroundImage}>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Code TOTP</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Entrez le code de votre application d'authentification.
+          </p>
+        </div>
         <TotpForm
           formId={formId}
           onSubmit={(values) => totpMutation.mutate(values)}
           loading={totpMutation.isPending}
         />
-      </CardContent>
-      <CardFooter className="flex flex-col items-stretch">
-        <Button form={formId} type="submit" loading={totpMutation.isPending}>
-          {t("continueTitle")}
+        <Button form={formId} type="submit" className="w-full" loading={totpMutation.isPending}>
+          Continuer
         </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </AuthShell>
   );
 };

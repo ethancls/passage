@@ -1,7 +1,5 @@
-import { Loader2 } from "lucide-react";
 import { Button } from "./button";
 import React from "react";
-import { twMerge } from "tailwind-merge";
 
 interface Props extends React.ComponentProps<typeof Button> {
   title: string;
@@ -16,18 +14,16 @@ export const OAuthButton = (props: Props) => {
   return (
     <Button
       onClick={onClick}
-      className={twMerge("rounded-md cursor-pointer", className)}
-      variant="default"
+      className={`w-full ${className || ""}`}
+      variant="outline"
+      size="lg"
+      loading={loading}
       {...rest}
     >
-      {loading ? (
-        <Loader2 className="animate-spin" />
-      ) : (
-        <>
-          {icon}
-          {title}
-        </>
-      )}
+      <span className="flex items-center justify-center size-5 shrink-0">
+        {icon}
+      </span>
+      <span>{title}</span>
     </Button>
   );
 };

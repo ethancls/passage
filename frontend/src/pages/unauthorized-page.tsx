@@ -1,13 +1,6 @@
+import { AuthShell } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
 import { Navigate, useLocation, useNavigate } from "react-router";
 
 export const UnauthorizedPage = () => {
@@ -23,53 +16,33 @@ export const UnauthorizedPage = () => {
     return <Navigate to="/" />;
   }
 
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const handleRedirect = () => {
-    setLoading(true);
-    navigate("/login");
-  };
-
-  let i18nKey = "unauthorizedLoginSubtitle";
-
-  if (resource) {
-    i18nKey = "unauthorizedResourceSubtitle";
-  }
-
-  if (groupErr === "true") {
-    i18nKey = "unauthorizedGroupsSubtitle";
-  }
-
-  if (ip) {
-    i18nKey = "unauthorizedIpSubtitle";
+  let message = `L'utilisateur ${username} n'est pas autorisé à se connecter.`;
+  if (resource && groupErr === "true") {
+    message = `L'utilisateur ${username} n'appartient pas aux groupes requis pour accéder à ${resource}.`;
+  } else if (resource) {
+    message = `L'utilisateur ${username} n'est pas autorisé à accéder à ${resource}.`;
+  } else if (ip) {
+    message = `L'adresse IP ${ip} n'est pas autorisée à accéder à ${resource}.`;
   }
 
   return (
-    <Card className="min-w-xs sm:min-w-sm">
-      <CardHeader>
-        <CardTitle className="text-3xl">{t("unauthorizedTitle")}</CardTitle>
-        <CardDescription>
-          <Trans
-            i18nKey={i18nKey}
-            t={t}
-            components={{
-              code: <code />,
-            }}
-            values={{
-              username,
-              resource,
-              ip,
-            }}
-          />
-        </CardDescription>
-      </CardHeader>
-      <CardFooter className="flex flex-col items-stretch">
-        <Button onClick={handleRedirect} loading={loading}>
-          {t("unauthorizedButton")}
+    <AuthShell backgroundImage="">
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Non autorisé</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">{message}</p>
+        </div>
+        <Button
+          onClick={() => { setLoading(true); navigate("/login"); }}
+          loading={loading}
+          className="w-full"
+        >
+          Réessayer
         </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </AuthShell>
   );
 };

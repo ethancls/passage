@@ -1,31 +1,28 @@
-"use client";
-
-import * as React from "react";
-import * as SeparatorPrimitive from "@radix-ui/react-separator";
-
+import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
+import type React from "react";
 import { cn } from "@/lib/utils";
 
-function Separator({
+export function Separator({
   className,
   orientation = "horizontal",
-  decorative = true,
   ...props
-}: React.ComponentProps<typeof SeparatorPrimitive.Root>) {
+}: SeparatorPrimitive.Props): React.ReactElement {
   return (
-    <SeparatorPrimitive.Root
-      data-slot="separator-root"
-      decorative={decorative}
-      orientation={orientation}
+    <SeparatorPrimitive
       className={cn(
-        "bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
+        "shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:not-[[class^='h-']]:not-[[class*='_h-']]:self-stretch",
         className,
       )}
+      data-slot="separator"
+      orientation={orientation}
       {...props}
     />
   );
 }
 
-function SeperatorWithChildren({ children }: { children: React.ReactNode }) {
+export { SeparatorPrimitive };
+
+export function SeperatorWithChildren({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4">
       <Separator className="flex-1" />
@@ -34,5 +31,3 @@ function SeperatorWithChildren({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
-export { Separator, SeperatorWithChildren };

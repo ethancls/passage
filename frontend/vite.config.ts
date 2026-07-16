@@ -15,9 +15,8 @@ export default defineConfig({
     host: "0.0.0.0",
     proxy: {
       "/api": {
-        target: "http://tinyauth-backend:3000/api",
+        target: "http://localhost:3200",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
     allowedHosts: true,

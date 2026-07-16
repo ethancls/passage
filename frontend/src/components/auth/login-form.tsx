@@ -1,91 +1,64 @@
-import { useTranslation } from "react-i18next";
-import { Input } from "../ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Button } from "../ui/button";
-import { loginSchema, LoginSchema } from "@/schemas/login-schema";
-import z from "zod";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
 
 interface Props {
-  onSubmit: (data: LoginSchema) => void;
+  onSubmit: (data: { username: string; password: string }) => void;
   loading?: boolean;
 }
 
-export const LoginForm = (props: Props) => {
-  const { onSubmit, loading } = props;
-  const { t } = useTranslation();
+export const LoginForm = ({ onSubmit, loading }: Props) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  z.config({
-    customError: (iss) =>
-      iss.input === undefined ? t("fieldRequired") : t("invalidInput"),
-  });
-
-  const form = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
-  });
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ username, password });
+  };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="text-left">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem className="mb-4 gap-0">
-              <FormLabel className="mb-2">{t("loginUsername")}</FormLabel>
-              <FormControl className="mb-1">
-                <Input
-                  className="h-10"
-                  placeholder={t("loginUsername")}
-                  disabled={loading}
-                  autoComplete="username"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Field>
+        <FieldLabel>Nom d'utilisateur</FieldLabel>
+        <Input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          disabled={loading}
+          autoComplete="username"
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem className="mb-4 gap-0">
-              <div className="relative mb-1">
-                <FormLabel className="mb-2">{t("loginPassword")}</FormLabel>
-                <FormControl>
-                  <Input
-                    className="h-10"
-                    placeholder={t("loginPassword")}
-                    type="password"
-                    disabled={loading}
-                    autoComplete="current-password"
-                    {...field}
-                  />
-                </FormControl>
-                <a
-                  href="/forgot-password"
-                  className="text-muted-foreground text-sm absolute right-0 bottom-[2.565rem]" // 2.565 is *just* perfect
-                >
-                  {t("forgotPasswordTitle")}
-                </a>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button className="h-10 w-full cursor-pointer" type="submit" loading={loading}>
-          {t("loginSubmit")}
-        </Button>
-      </form>
-    </Form>
+      </Field>
+
+      <Field>
+        <FieldLabel>Mot de passe</FieldLabel>
+        <div className="relative w-full">
+          <Input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            disabled={loading}
+            autoComplete="current-password"
+            className="pr-10"
+          />
+          <button
+            type="button"
+            aria-label={showPassword ? "Cacher" : "Afficher"}
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-0 top-0 h-full flex items-center justify-center px-3 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          >
+            {showPassword ? <EyeSlash aria-hidden="true" className="size-4" /> : <Eye aria-hidden="true" className="size-4" />}
+          </button>
+        </div>
+      </Field>
+
+      <Button type="submit" loading={loading} className="w-full" size="lg">
+        Se connecter
+      </Button>
+    </form>
   );
 };

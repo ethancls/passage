@@ -1,34 +1,29 @@
+import { AuthShell } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
 export const NotFoundPage = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const handleRedirect = () => {
-    setLoading(true);
-    navigate("/");
-  };
-
   return (
-    <Card className="min-w-xs sm:min-w-sm">
-      <CardHeader>
-        <CardTitle className="text-3xl">{t("notFoundTitle")}</CardTitle>
-        <CardDescription>{t("notFoundSubtitle")}</CardDescription>
-      </CardHeader>
-      <CardFooter className="flex flex-col items-stretch">
-        <Button onClick={handleRedirect} loading={loading}>{t("notFoundButton")}</Button>
-      </CardFooter>
-    </Card>
+    <AuthShell backgroundImage="">
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Page introuvable</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            La page que vous cherchez n'existe pas.
+          </p>
+        </div>
+        <Button
+          onClick={() => { setLoading(true); navigate("/"); }}
+          loading={loading}
+          className="w-full"
+        >
+          Accueil
+        </Button>
+      </div>
+    </AuthShell>
   );
 };

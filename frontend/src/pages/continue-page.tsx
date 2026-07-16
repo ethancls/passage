@@ -1,15 +1,8 @@
+import { AuthShell } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { useAppContext } from "@/context/app-context";
 import { useUserContext } from "@/context/user-context";
 import { isValidUrl } from "@/lib/utils";
-import { Trans, useTranslation } from "react-i18next";
 import { Navigate, useLocation, useNavigate } from "react-router";
 import DOMPurify from "dompurify";
 import { useState } from "react";
@@ -21,7 +14,7 @@ export const ContinuePage = () => {
     return <Navigate to="/login" />;
   }
 
-  const { domain, disableContinue } = useAppContext();
+  const { domain, disableContinue, backgroundImage } = useAppContext();
   const { search } = useLocation();
   const [loading, setLoading] = useState(false);
 
@@ -39,98 +32,79 @@ export const ContinuePage = () => {
   const handleRedirect = () => {
     setLoading(true);
     window.location.href = DOMPurify.sanitize(redirectURI);
-  }
+  };
 
   if (disableContinue) {
     handleRedirect();
   }
 
-  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const url = new URL(redirectURI);
 
   if (!(url.hostname == domain) && !url.hostname.endsWith(`.${domain}`)) {
     return (
-      <Card className="min-w-xs sm:min-w-sm">
-        <CardHeader>
-          <CardTitle className="text-3xl">
-            {t("untrustedRedirectTitle")}
-          </CardTitle>
-          <CardDescription>
-            <Trans
-              i18nKey="untrustedRedirectSubtitle"
-              t={t}
-              components={{
-                code: <code />,
-              }}
-              values={{ domain }}
-            />
-          </CardDescription>
-        </CardHeader>
-        <CardFooter className="flex flex-col items-stretch gap-2">
-          <Button
-            onClick={handleRedirect}
-            loading={loading}
-            variant="destructive"
-          >
-            {t("continueTitle")}
-          </Button>
-          <Button onClick={() => navigate("/logout")} variant="outline" disabled={loading}>
-            {t("cancelTitle")}
-          </Button>
-        </CardFooter>
-      </Card>
+      <AuthShell backgroundImage={backgroundImage}>
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-destructive">
+              Redirection non fiable
+            </h1>
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              Vous essayez d'être redirigé vers un domaine différent de <code>{domain}</code>. Voulez-vous continuer ?
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Button onClick={handleRedirect} loading={loading} variant="destructive">
+              Continuer
+            </Button>
+            <Button onClick={() => navigate("/logout")} variant="outline" disabled={loading}>
+              Annuler
+            </Button>
+          </div>
+        </div>
+      </AuthShell>
     );
   }
 
   if (url.protocol === "http:" && window.location.protocol === "https:") {
     return (
-      <Card className="min-w-xs sm:min-w-sm">
-        <CardHeader>
-          <CardTitle className="text-3xl">
-            {t("continueInsecureRedirectTitle")}
-          </CardTitle>
-          <CardDescription>
-            <Trans
-              i18nKey="continueInsecureRedirectSubtitle"
-              t={t}
-              components={{
-                code: <code />,
-              }}
-            />
-          </CardDescription>
-        </CardHeader>
-        <CardFooter className="flex flex-col items-stretch gap-2">
-          <Button
-            onClick={handleRedirect}
-            loading={loading}
-            variant="warning"
-          >
-            {t("continueTitle")}
-          </Button>
-          <Button onClick={() => navigate("/logout")} variant="outline" disabled={loading}>
-            {t("cancelTitle")}
-          </Button>
-        </CardFooter>
-      </Card>
+      <AuthShell backgroundImage={backgroundImage}>
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-amber-600">
+              Redirection non sécurisée
+            </h1>
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              Vous essayez d'être redirigé de <code>https</code> vers <code>http</code>. Voulez-vous continuer ?
+            </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Button onClick={handleRedirect} loading={loading} variant="warning">
+              Continuer
+            </Button>
+            <Button onClick={() => navigate("/logout")} variant="outline" disabled={loading}>
+              Annuler
+            </Button>
+          </div>
+        </div>
+      </AuthShell>
     );
   }
 
   return (
-    <Card className="min-w-xs sm:min-w-sm">
-      <CardHeader>
-        <CardTitle className="text-3xl">{t("continueTitle")}</CardTitle>
-        <CardDescription>{t("continueSubtitle")}</CardDescription>
-      </CardHeader>
-      <CardFooter className="flex flex-col items-stretch">
-        <Button
-          onClick={handleRedirect}
-          loading={loading}
-        >
-          {t("continueTitle")}
+    <AuthShell backgroundImage={backgroundImage}>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Continuer</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Cliquez pour continuer vers votre application.
+          </p>
+        </div>
+        <Button onClick={handleRedirect} loading={loading} className="w-full">
+          Continuer
         </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </AuthShell>
   );
 };

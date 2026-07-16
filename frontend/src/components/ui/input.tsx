@@ -1,21 +1,50 @@
-import * as React from "react";
-
+import { Input as InputPrimitive } from "@base-ui/react/input";
+import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+export type InputProps = Omit<
+  InputPrimitive.Props & React.RefAttributes<HTMLInputElement>,
+  "size"
+> & {
+  size?: "sm" | "default" | "lg" | number;
+  unstyled?: boolean;
+  nativeInput?: boolean;
+};
+
+export function Input({
+  className,
+  size = "default",
+  unstyled = false,
+  nativeInput = false,
+  style,
+  ...props
+}: InputProps): React.ReactElement {
+  const inputClassName = cn(
+    "h-8.5 w-full min-w-0 rounded-[inherit] px-[calc(--spacing(3)-1px)] leading-8.5 outline-none [transition:background-color_5000000s_ease-in-out_0s] placeholder:text-muted-foreground/72 sm:h-7.5 sm:leading-7.5",
+    size === "sm" && "h-7.5 px-[calc(--spacing(2.5)-1px)] leading-7.5 sm:h-6.5 sm:leading-6.5",
+    size === "lg" && "h-9.5 leading-9.5 sm:h-8.5 sm:leading-8.5",
+    props.type === "file" && "text-muted-foreground file:me-3 file:bg-transparent file:font-medium file:text-foreground file:text-sm",
+  );
+
   return (
-    <input
-      type={type}
-      data-slot="input"
-      className={cn(
-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-        className,
+    <span
+      className={
+        cn(
+          !unstyled &&
+            "relative inline-flex w-full overflow-hidden rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base text-foreground shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:border-ring has-aria-invalid:border-destructive/36 has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] sm:text-sm dark:bg-input/32",
+          className,
+        ) || undefined
+      }
+      data-size={size}
+      data-slot="input-control"
+    >
+      {nativeInput ? (
+        <input className={inputClassName} data-slot="input" style={typeof style === "function" ? undefined : style} {...props} />
+      ) : (
+        <InputPrimitive className={inputClassName} data-slot="input" style={style} {...props} />
       )}
-      {...props}
-    />
+    </span>
   );
 }
 
-export { Input };
+export { InputPrimitive };
