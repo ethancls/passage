@@ -9,7 +9,6 @@ import { useAppContext } from "@/context/app-context";
 import { useUserContext } from "@/context/user-context";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError, type AxiosResponse } from "axios";
-import { useTranslation } from "react-i18next";
 import { Navigate, useLocation } from "react-router";
 import { toast } from "sonner";
 
@@ -19,7 +18,6 @@ export const LoginPage = () => {
   const { isLoggedIn } = useUserContext();
   const { configuredProviders, genericName, backgroundImage } = useAppContext();
   const { search } = useLocation();
-  const { t } = useTranslation();
   const searchParams = new URLSearchParams(search);
   const redirectUri = searchParams.get("redirect_uri");
   const oauthConfigured = configuredProviders.filter((p: string) => p !== "username").length > 0;
