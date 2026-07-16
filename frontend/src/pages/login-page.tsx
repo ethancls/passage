@@ -4,7 +4,7 @@ import { Fingerprint } from "lucide-react";
 import { GithubIcon } from "@/components/icons/github";
 import { GoogleIcon } from "@/components/icons/google";
 import { OAuthButton } from "@/components/ui/oauth-button";
-import { Separator, SeperatorWithChildren } from "@/components/ui/separator";
+import { SeperatorWithChildren } from "@/components/ui/separator";
 import { useAppContext } from "@/context/app-context";
 import { useUserContext } from "@/context/user-context";
 import { useMutation } from "@tanstack/react-query";
@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next";
 import { Navigate, useLocation } from "react-router";
 import { toast } from "sonner";
 
-type OAuthUrlResponse = { url: string };
 type LoginResponse = { totpPending?: boolean };
 
 export const LoginPage = () => {
