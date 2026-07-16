@@ -17,6 +17,8 @@ COPY ./frontend/tsconfig.app.json ./
 COPY ./frontend/tsconfig.node.json ./
 COPY ./frontend/vite.config.ts ./
 
+ARG VERSION
+RUN sed -i "s/__VERSION__/${VERSION}/g" index.html
 RUN bun run build
 
 # Builder
