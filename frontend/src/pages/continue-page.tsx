@@ -80,7 +80,7 @@ export const ContinuePage = () => {
             </p>
           </div>
           <div className="flex flex-col gap-2">
-            <Button onClick={handleRedirect} loading={loading} variant="warning">
+            <Button onClick={handleRedirect} loading={loading} variant="secondary">
               Continuer
             </Button>
             <Button onClick={() => navigate("/logout")} variant="outline" disabled={loading}>
