@@ -107,7 +107,7 @@ export const LoginPage = () => {
         )}
 
         {configuredProviders.length === 0 && (
-          <p className="text-center text-sm text-destructive">{t("failedToFetchProvidersTitle")}</p>
+          <p className="text-center text-sm text-destructive">Impossible de charger les fournisseurs d'authentification.</p>
         )}
       </div>
     </AuthShell>

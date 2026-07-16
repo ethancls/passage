@@ -5,14 +5,12 @@ import { useUserContext } from "@/context/user-context";
 import { capitalize } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { Trans, useTranslation } from "react-i18next";
 import { Navigate } from "react-router";
 import { toast } from "sonner";
 
 export const LogoutPage = () => {
   const { provider, username, isLoggedIn, email } = useUserContext();
   const { backgroundImage, genericName } = useAppContext();
-  const { t } = useTranslation();
 
   const logoutMutation = useMutation({
     mutationFn: () => axios.post("/api/logout"),
@@ -28,30 +26,18 @@ export const LogoutPage = () => {
 
   if (!isLoggedIn) return <Navigate to="/login" />;
 
+  const subtitle =
+    provider !== "username"
+      ? `Vous êtes connecté en tant que ${email} via ${provider === "generic" ? genericName : capitalize(provider)}.`
+      : `Vous êtes connecté en tant que ${username}.`;
+
   return (
     <AuthShell backgroundImage={backgroundImage}>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t("logoutTitle")}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Déconnexion</h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            {provider !== "username" ? (
-              <Trans
-                i18nKey="logoutOauthSubtitle"
-                t={t}
-                components={{ code: <code /> }}
-                values={{
-                  username: email,
-                  provider: provider === "generic" ? genericName : capitalize(provider),
-                }}
-              />
-            ) : (
-              <Trans
-                i18nKey="logoutUsernameSubtitle"
-                t={t}
-                components={{ code: <code /> }}
-                values={{ username }}
-              />
-            )}
+            {subtitle} Cliquez ci-dessous pour vous déconnecter.
           </p>
         </div>
 
@@ -63,10 +49,10 @@ export const LogoutPage = () => {
             onClick={() => window.history.back()}
             disabled={logoutMutation.isPending}
           >
-            {t("cancelTitle")}
+            Annuler
           </Button>
           <Button className="flex-1" loading={logoutMutation.isPending} onClick={() => logoutMutation.mutate()}>
-            {t("logoutTitle")}
+            Déconnexion
           </Button>
         </div>
       </div>
